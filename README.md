@@ -1,27 +1,107 @@
-# Patient Queue Simulator
+# Clinic Operations Data Processor
 
-A beginner-friendly Python project that simulates a simple patient queue for a clinic.
+A small, dependency-free Python data pipeline that validates clinic CSV records, cleans accepted rows, and exports JSON results with a processing report.
+
+> **Portfolio project:** Built to demonstrate Python file I/O, CSV/JSON processing, regular expressions, data validation, object-oriented programming, command-line arguments, and automated testing. All included patient records are fictional.
 
 ## Features
 
-- Add a patient to the queue.
-- View patients waiting in the queue.
-- Serve the next patient.
-- Validate patient information.
+- Reads UTF-8 CSV files and checks required columns.
+- Cleans whitespace and validates each row independently.
+- Uses a `Patient` data class to represent validated records.
+- Validates phone numbers using a regular expression.
+- Records rejected rows with their line numbers and validation reasons.
+- Exports accepted records, rejected records, and summary counts as JSON.
+- Supports custom input files and output directories.
+- Uses only the Python standard library at runtime.
 
-## Learning Goals
+## Quick Start
 
-This project helps me practice Python fundamentals, including:
+Requires Python 3.10 or newer.
 
-- Functions and loops.
-- Lists and dictionaries.
-- Input validation and exception handling.
-- Classes and objects.
+Clone the repository and enter its directory:
 
-## Technologies
+```bash
+git clone https://github.com/MohamedMekhemer/nursing-system.git
+cd nursing-system
+```
 
-- Python 3
+Run the processor:
 
-## About
+```bash
+python processor.py
+```
 
-This is a learning project built as part of my journey to become a Python programmer.
+The default input file is `patients.csv`. Results are written beside the script:
+
+- `patients_cleaned.json`
+- `patients_rejected.json`
+- `report.json`
+
+Use a different CSV file and output directory:
+
+```bash
+python processor.py path/to/clinic.csv --output-dir output
+```
+
+View all command-line options:
+
+```bash
+python processor.py --help
+```
+
+## Input Format
+
+The CSV header must include `name`, `age`, `phone`, and `room`. Header matching ignores capitalization and surrounding whitespace.
+
+| Field | Rule |
+|---|---|
+| `name` | Required; repeated whitespace is collapsed |
+| `age` | Whole number from 1 to 120 |
+| `phone` | 7–20 digits; may include `+`, spaces, parentheses, or hyphens |
+| `room` | Required; surrounding whitespace is removed |
+
+Rows that fail validation are recorded in `patients_rejected.json`. Processing continues with the next row.
+
+## Where OOP Is Used
+
+`patient.py` defines the `Patient` data class. `processor.py` creates a validated object for each CSV row using `Patient.from_row(...)`. It then calls `patient.to_dict()` to prepare accepted records for JSON serialization.
+
+Reusable validation rules are defined in `validation.py`.
+
+## Run Tests
+
+Install pytest as a development dependency:
+
+```bash
+python -m pip install pytest
+```
+
+Run the tests from the repository directory:
+
+```bash
+python -m pytest
+```
+
+The application itself has no third-party runtime dependencies.
+
+## Project Structure
+
+```text
+nursing-system/
+├── patient.py
+├── processor.py
+├── validation.py
+├── patients.csv
+└── tests/
+```
+
+These are the main files involved in the data-processing pipeline.
+
+## Privacy
+
+This is an educational data-processing project, not a clinical system. Use fictional data only. Do not commit real patient information to a public repository.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
