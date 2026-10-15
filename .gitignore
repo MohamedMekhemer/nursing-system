@@ -218,3 +218,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project-generated output files
+patients_cleaned.json
+patients_rejected.json
+report.json
+patients_export.csv
+
+# Local test artifacts
+.test-tmp/
+
+# Local runtime data
+/patients.json
+/output/

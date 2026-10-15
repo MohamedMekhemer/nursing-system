@@ -4,30 +4,43 @@ from pathlib import Path
 
 from patients import add_patient
 
-DATA_FILE = Path(__file__).with_name("patients.json")
-CSV_FILE = Path(__file__).with_name("patients.csv")
-EXPORT_FILE = Path(__file__).with_name("patients_export.csv")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+SAMPLE_DATA_DIR = PROJECT_ROOT / "sample_data"
+SAMPLE_DATA_FILE = SAMPLE_DATA_DIR / "patients.json"
+
+DATA_FILE = PROJECT_ROOT / "patients.json"
+CSV_FILE = SAMPLE_DATA_DIR / "patients.csv"
+EXPORT_FILE = PROJECT_ROOT / "patients_export.csv"
 CSV_FIELDS = ["name", "age", "phone", "room"]
 
 
 def load_patients(file_path=DATA_FILE):
     file_path = Path(file_path)
+
     if not file_path.exists():
-        return []
+        if file_path == DATA_FILE and SAMPLE_DATA_FILE.exists():
+            file_path = SAMPLE_DATA_FILE
+        else:
+            return []
 
     try:
         with file_path.open("r", encoding="utf-8") as file:
             patients = json.load(file)
     except json.JSONDecodeError as error:
-        raise ValueError(f"Patient data file contains invalid JSON: {file_path}") from error
+        raise ValueError(
+            f"Patient data file contains invalid JSON: {file_path}"
+        ) from error
 
     if not isinstance(patients, list):
         raise ValueError("Patient data file must contain a JSON list.")
+
     return patients
 
 
 def save_patients(patients, file_path=DATA_FILE):
     file_path = Path(file_path)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
     with file_path.open("w", encoding="utf-8") as file:
         json.dump(patients, file, indent=2)
 
@@ -63,7 +76,10 @@ def import_patients_from_csv(patients, file_path=CSV_FILE):
 
 
 def export_patients_to_csv(patients, file_path=EXPORT_FILE):
-    with Path(file_path).open("w", newline="", encoding="utf-8") as file:
+    file_path = Path(file_path)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with file_path.open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=CSV_FIELDS)
         writer.writeheader()
         writer.writerows(
