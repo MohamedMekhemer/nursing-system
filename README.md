@@ -1,107 +1,151 @@
 # Clinic Operations Data Processor
 
-A small, dependency-free Python data pipeline that validates clinic CSV records, cleans accepted rows, and exports JSON results with a processing report.
+A beginner-friendly Python project that combines an interactive patient management application with a CSV data-processing pipeline.
 
-> **Portfolio project:** Built to demonstrate Python file I/O, CSV/JSON processing, regular expressions, data validation, object-oriented programming, command-line arguments, and automated testing. All included patient records are fictional.
+This educational portfolio project demonstrates Python functions, modular code, file handling, CSV and JSON processing, data validation, regular expressions, object-oriented programming, command-line arguments, and automated testing.
+
+All included patient records are fictional.
 
 ## Features
 
-- Reads UTF-8 CSV files and checks required columns.
-- Cleans whitespace and validates each row independently.
-- Uses a `Patient` data class to represent validated records.
-- Validates phone numbers using a regular expression.
-- Records rejected rows with their line numbers and validation reasons.
-- Exports accepted records, rejected records, and summary counts as JSON.
-- Supports custom input files and output directories.
-- Uses only the Python standard library at runtime.
+### Patient Management
 
-## Quick Start
+- Add, view, search, and update patient records.
+- Serve the next waiting patient.
+- Import patient records from CSV.
+- Export patient records to CSV.
+- Display patient statistics.
+- Validate patient names, ages, phone numbers, and room values.
+- Store working patient data as JSON.
 
-Requires Python 3.10 or newer.
+### CSV Data Processing
 
-Clone the repository and enter its directory:
+- Read UTF-8 CSV files and check required columns.
+- Clean whitespace and validate each row independently.
+- Use a `Patient` data class to represent validated records.
+- Record rejected rows with their line numbers and validation reasons.
+- Export accepted records, rejected records, and summary counts as JSON.
+- Support custom input files and output directories.
 
-```bash
-git clone https://github.com/MohamedMekhemer/nursing-system.git
-cd nursing-system
+## Project Structure
+
+```text
+nursing-system/
+├── src/
+│   ├── main.py
+│   ├── patient.py
+│   ├── patients.py
+│   ├── patient_statistics.py
+│   ├── processor.py
+│   ├── storage.py
+│   └── validation.py
+├── tests/
+├── sample_data/
+│   ├── patients.csv
+│   └── patients.json
+├── screenshots/
+├── output/                 # Generated locally
+├── README.md
+├── requirements.txt
+├── pytest.ini
+├── .gitignore
+└── LICENSE
 ```
 
-Run the processor:
+## Requirements
+
+- Python 3.10 or newer
+- `pytest` for running tests
+
+Install the development dependency:
 
 ```bash
-python processor.py
+python -m pip install -r requirements.txt
 ```
 
-The default input file is `patients.csv`. Results are written beside the script:
+The application uses only the Python standard library at runtime.
+
+## Run the Patient Management Application
+
+From the repository root, run:
+
+```bash
+python src/main.py
+```
+
+The application provides a menu for managing patient records.
+
+Working data is stored locally in `patients.json` in the repository root. If this file does not exist, the application loads the fictional sample records from `sample_data/patients.json`.
+
+## Run the CSV Processor
+
+Process the included sample CSV file:
+
+```bash
+python src/processor.py
+```
+
+By default, the processor reads `sample_data/patients.csv` and writes its results to `output/`:
 
 - `patients_cleaned.json`
 - `patients_rejected.json`
 - `report.json`
 
-Use a different CSV file and output directory:
+Process another CSV file and choose an output directory:
 
 ```bash
-python processor.py path/to/clinic.csv --output-dir output
+python src/processor.py path/to/clinic.csv --output-dir output
 ```
 
-View all command-line options:
+Display the available command-line options:
 
 ```bash
-python processor.py --help
+python src/processor.py --help
 ```
 
 ## Input Format
 
-The CSV header must include `name`, `age`, `phone`, and `room`. Header matching ignores capitalization and surrounding whitespace.
+The CSV file must include the following columns:
 
-| Field | Rule |
+| Field | Validation rule |
 |---|---|
 | `name` | Required; repeated whitespace is collapsed |
 | `age` | Whole number from 1 to 120 |
 | `phone` | 7–20 digits; may include `+`, spaces, parentheses, or hyphens |
 | `room` | Required; surrounding whitespace is removed |
 
-Rows that fail validation are recorded in `patients_rejected.json`. Processing continues with the next row.
-
-## Where OOP Is Used
-
-`patient.py` defines the `Patient` data class. `processor.py` creates a validated object for each CSV row using `Patient.from_row(...)`. It then calls `patient.to_dict()` to prepare accepted records for JSON serialization.
-
-Reusable validation rules are defined in `validation.py`.
+Rows that fail validation are recorded in the rejected JSON output. Processing continues with the next row.
 
 ## Run Tests
 
-Install pytest as a development dependency:
-
-```bash
-python -m pip install pytest
-```
-
-Run the tests from the repository directory:
+Run the automated test suite from the repository root:
 
 ```bash
 python -m pytest
 ```
 
-The application itself has no third-party runtime dependencies.
+The tests cover the main application, patient operations, data processing, statistics, storage, and validation.
 
-## Project Structure
+## Screenshots
 
-```text
-nursing-system/
-├── patient.py
-├── processor.py
-├── validation.py
-├── patients.csv
-└── tests/
-```
+### Patient Management Menu
 
-These are the main files involved in the data-processing pipeline.
+![Patient management menu](screenshots/patient-management-menu.png)
+
+The interactive menu provides options for adding, viewing, searching, and updating patient records, importing and exporting CSV files, and viewing statistics.
+
+### CSV Processing Results
+
+![CSV processing results](screenshots/processor-run.png)
+
+The CSV processor validates sample records, reports accepted and rejected rows, and saves the generated JSON files in the local `output/` directory.
 
 ## Privacy
 
-This is an educational data-processing project, not a clinical system. Use fictional data only. Do not commit real patient information to a public repository.
+This is an educational project, not a clinical system. Use fictional data only. Never commit real patient records or other sensitive information to a public repository.
+
+Generated working data and processing outputs are excluded from version control.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+This project is licensed under the MIT License. See [LICENSE](LICENSE).

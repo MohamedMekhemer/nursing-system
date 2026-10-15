@@ -227,3 +227,7 @@ patients_export.csv
 
 # Local test artifacts
 .test-tmp/
+
+# Local runtime data
+/patients.json
+/output/

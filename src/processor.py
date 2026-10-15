@@ -9,6 +9,10 @@ from patient import Patient
 
 REQUIRED_FIELDS = {"name", "age", "phone", "room"}
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+SAMPLE_DATA_DIR = PROJECT_ROOT / "sample_data"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "output"
+
 
 def write_json(file_path, data):
     """Save Python data as readable UTF-8 JSON."""
@@ -58,13 +62,23 @@ def process_csv(input_path, output_path, rejected_path, report_path):
 
 
 def main(argv=None):
-    folder = Path(__file__).parent
     parser = argparse.ArgumentParser(
         description="Validate clinic rows from CSV and save cleaned JSON outputs."
     )
-    parser.add_argument("input", nargs="?", type=Path, default=folder / "patients.csv")
-    parser.add_argument("--output-dir", type=Path, default=folder)
+    parser.add_argument(
+        "input",
+        nargs="?",
+        type=Path,
+        default=SAMPLE_DATA_DIR / "patients.csv",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=DEFAULT_OUTPUT_DIR,
+    )
+
     args = parser.parse_args(argv)
+
     try:
         args.output_dir.mkdir(parents=True, exist_ok=True)
         report = process_csv(
@@ -83,7 +97,6 @@ def main(argv=None):
     print(f"Rejected: {report['rejected_count']}")
     print(f"Output folder: {args.output_dir}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
